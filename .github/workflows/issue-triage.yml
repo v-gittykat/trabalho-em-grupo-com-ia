@@ -30,7 +30,7 @@ jobs:
             if (text.includes("revisao") || text.includes("corrigir")) {
               labels.add("revisao");
             }
-            if (text.includes("bloqueio") || text.includes("impedido") || text.includes("atraso")) {
+            if (issue.title.toLowerCase().includes("[bloqueio]") || text.includes("impedido") || text.includes("atraso")) {
               labels.add("bloqueio");
             }
 
@@ -44,4 +44,3 @@ jobs:
               issue_number: issue.number,
               labels: [...labels]
             });
-
