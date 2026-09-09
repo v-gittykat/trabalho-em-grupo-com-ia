@@ -1,0 +1,31 @@
+name: Bloqueio
+description: Registre algo que esta impedindo o progresso do grupo.
+title: "[Bloqueio]: "
+labels:
+  - bloqueio
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descricao do bloqueio
+      description: Explique o que esta impedindo o avanco.
+      placeholder: Nao conseguimos avancar porque...
+    validations:
+      required: true
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Impacto
+      description: Qual parte do trabalho e afetada?
+      placeholder: Este bloqueio afeta...
+    validations:
+      required: true
+  - type: textarea
+    id: ajuda
+    attributes:
+      label: Ajuda necessaria
+      description: O que precisa acontecer para desbloquear?
+      placeholder: Precisamos de...
+    validations:
+      required: true
+

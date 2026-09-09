@@ -1,0 +1,43 @@
+name: Tarefa academica
+description: Registre uma tarefa do trabalho em grupo.
+title: "[Tarefa]: "
+labels:
+  - tarefa
+body:
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto
+      description: Explique por que esta tarefa é importante para o trabalho.
+      placeholder: Esta tarefa contribui para...
+    validations:
+      required: true
+  - type: textarea
+    id: entregavel
+    attributes:
+      label: Entregavel esperado
+      description: Descreva o que deve existir quando a tarefa for concluida.
+      placeholder: Exemplo: uma secao com 500 palavras e 3 referencias.
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Liste os passos necessarios.
+      value: |
+        - [ ] Pesquisar fontes confiaveis
+        - [ ] Registrar referencias
+        - [ ] Escrever rascunho
+        - [ ] Revisar com o grupo
+    validations:
+      required: true
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Criterios de aceite
+      description: Como o grupo vai saber que a tarefa esta pronta?
+      placeholder: A tarefa sera considerada pronta quando...
+    validations:
+      required: true
+
