@@ -48,6 +48,7 @@ docs/
     tarefa-academica.yml
     bloqueio.yml
   workflows/
+    agentic-weekly-report.yml
     weekly-report.yml
     issue-triage.yml
   agents/
@@ -67,6 +68,14 @@ docs/
 | Weekly Project Reporter Agent | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
 
 ## Relatório semanal com agente
+
+O workflow **Agentic weekly project report** é o fluxo principal para a demo. Ele pode ser executado:
+
+- automaticamente toda sexta-feira;
+- manualmente pela aba **Actions**;
+- manualmente com um título customizado.
+
+Ele gera uma issue de relatório e também pode salvar uma cópia em `docs/reports/`.
 
 O workflow **Weekly project report** pode ser executado manualmente ou por agenda. Ele cria uma issue de relatório com:
 

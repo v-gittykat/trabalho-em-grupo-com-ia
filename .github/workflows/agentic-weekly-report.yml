@@ -1,0 +1,254 @@
+name: Agentic weekly project report
+
+on:
+  workflow_dispatch:
+    inputs:
+      report_title:
+        description: "Titulo opcional do relatorio"
+        required: false
+        type: string
+      create_issue:
+        description: "Criar uma issue com o relatorio?"
+        required: true
+        default: true
+        type: boolean
+      save_markdown:
+        description: "Salvar uma copia em docs/reports?"
+        required: true
+        default: true
+        type: boolean
+  schedule:
+    # Sexta-feira, 18h no horario de Brasilia (21h UTC).
+    - cron: "0 21 * * 5"
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  agentic-weekly-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate agentic weekly report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const inputs = context.payload.inputs || {};
+            const createIssue = inputs.create_issue !== "false";
+            const saveMarkdown = inputs.save_markdown !== "false";
+
+            const now = new Date();
+            const reportDate = now.toISOString().slice(0, 10);
+            const sevenDaysAgo = new Date(now);
+            sevenDaysAgo.setDate(now.getDate() - 7);
+
+            const title = inputs.report_title?.trim() ||
+              `Relatorio agentico semanal - ${reportDate}`;
+
+            const allItems = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "all",
+              per_page: 100
+            });
+
+            const issues = allItems.filter(item => !item.pull_request);
+            const openIssues = issues.filter(issue => issue.state === "open");
+            const closedIssues = issues.filter(issue => issue.state === "closed");
+            const recentlyClosed = closedIssues.filter(issue =>
+              new Date(issue.closed_at || issue.updated_at) >= sevenDaysAgo
+            );
+
+            const labels = issue => issue.labels.map(label => label.name);
+            const hasAnyLabel = (issue, expected) =>
+              labels(issue).some(label => expected.includes(label));
+            const textOf = issue =>
+              `${issue.title}\n${issue.body || ""}`.toLowerCase();
+
+            const byMilestone = openIssues.reduce((acc, issue) => {
+              const milestone = issue.milestone?.title || "Sem milestone";
+              acc[milestone] = acc[milestone] || [];
+              acc[milestone].push(issue);
+              return acc;
+            }, {});
+
+            const blockers = openIssues.filter(issue =>
+              hasAnyLabel(issue, ["bloqueio"]) ||
+              textOf(issue).includes("bloqueio") ||
+              textOf(issue).includes("bloqueado") ||
+              textOf(issue).includes("impedido")
+            );
+
+            const risks = openIssues.filter(issue =>
+              hasAnyLabel(issue, ["risco", "prioridade-alta"]) ||
+              textOf(issue).includes("risco") ||
+              textOf(issue).includes("atraso")
+            );
+
+            const dependencies = openIssues.filter(issue =>
+              hasAnyLabel(issue, ["dependencia"]) ||
+              textOf(issue).includes("depende de") ||
+              textOf(issue).includes("dependencia") ||
+              textOf(issue).includes("dependência")
+            );
+
+            const stale = openIssues.filter(issue => {
+              const updated = new Date(issue.updated_at);
+              return updated < sevenDaysAgo && !hasAnyLabel(issue, ["relatorio"]);
+            });
+
+            const highPriority = openIssues.filter(issue =>
+              hasAnyLabel(issue, ["prioridade-alta"])
+            );
+
+            const closedPercent = issues.length
+              ? Math.round((closedIssues.length / issues.length) * 100)
+              : 0;
+
+            const bullet = issue => {
+              const labelText = labels(issue).length
+                ? ` — ${labels(issue).join(", ")}`
+                : "";
+              return `- #${issue.number} ${issue.title}${labelText}`;
+            };
+
+            const list = (items, max = 8) => {
+              if (!items.length) return ["- Nenhum item identificado."];
+              const lines = items.slice(0, max).map(bullet);
+              if (items.length > max) {
+                lines.push(`- ... e mais ${items.length - max} item(ns).`);
+              }
+              return lines;
+            };
+
+            const milestoneLines = Object.entries(byMilestone)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([milestone, items]) => `- **${milestone}**: ${items.length} issue(s) aberta(s)`);
+
+            const executiveSummary = blockers.length
+              ? `O projeto tem ${openIssues.length} issue(s) aberta(s), ${blockers.length} bloqueador(es), ${risks.length} risco(s) e ${dependencies.length} dependência(s) em acompanhamento. A prioridade deve ser remover bloqueios e proteger tarefas dependentes.`
+              : `O projeto tem ${openIssues.length} issue(s) aberta(s), sem bloqueadores explícitos registrados. A prioridade deve ser manter as issues atualizadas e acompanhar riscos antes que virem atraso.`;
+
+            const recoveryPlan = blockers.length || risks.length || dependencies.length
+              ? [
+                  "1. Priorizar issues com `bloqueio`, `risco` ou `prioridade-alta`.",
+                  "2. Confirmar quais tarefas dependem das entregas bloqueadas.",
+                  "3. Redistribuir tarefas quando o responsável não conseguir avançar.",
+                  "4. Registrar uma atualização objetiva nas issues críticas.",
+                  "5. Atualizar o GitHub Project com status, prioridade, risco e prazo."
+                ]
+              : [
+                  "1. Revisar issues sem atualização recente.",
+                  "2. Confirmar próximos marcos do projeto.",
+                  "3. Manter critérios de aceite claros antes de mover tarefas para Done."
+                ];
+
+            const body = [
+              `# ${title}`,
+              "",
+              "> Relatório gerado automaticamente por um agentic workflow no GitHub Actions.",
+              "",
+              "## Resumo executivo",
+              "",
+              executiveSummary,
+              "",
+              "## Indicadores gerais",
+              "",
+              `- Issues totais: ${issues.length}`,
+              `- Issues abertas: ${openIssues.length}`,
+              `- Issues fechadas: ${closedIssues.length}`,
+              `- Concluídas nos últimos 7 dias: ${recentlyClosed.length}`,
+              `- Progresso aproximado: ${closedPercent}%`,
+              `- Bloqueadores: ${blockers.length}`,
+              `- Riscos: ${risks.length}`,
+              `- Dependências: ${dependencies.length}`,
+              `- Sem atualização recente: ${stale.length}`,
+              "",
+              "## Principais avanços",
+              "",
+              ...list(recentlyClosed, 6),
+              "",
+              "## Bloqueadores",
+              "",
+              ...list(blockers, 8),
+              "",
+              "## Riscos",
+              "",
+              ...list(risks, 8),
+              "",
+              "## Dependências críticas",
+              "",
+              ...list(dependencies, 8),
+              "",
+              "## Tarefas que precisam de atenção",
+              "",
+              ...list([...highPriority, ...stale], 10),
+              "",
+              "## Distribuição por milestone",
+              "",
+              ...(milestoneLines.length ? milestoneLines : ["- Nenhuma milestone registrada."]),
+              "",
+              "## Plano de recuperação sugerido",
+              "",
+              ...recoveryPlan,
+              "",
+              "## Próximas ações recomendadas",
+              "",
+              "1. Revisar este relatório com o grupo.",
+              "2. Usar o Copilot com o prompt `.github/prompts/weekly-project-report.prompt.md` para transformar este diagnóstico em mensagem executiva.",
+              "3. Converter bloqueios em plano de recuperação com responsável e prazo.",
+              "",
+              "## Como usar com Copilot",
+              "",
+              "```text",
+              "Atue como Weekly Project Reporter Agent deste repositório.",
+              "Use este relatório como entrada e gere uma versão executiva para o grupo, destacando bloqueadores, riscos, dependências e próximas ações.",
+              "```",
+              "",
+              "> A Action dispara. O agente interpreta. O humano decide."
+            ].join("\n");
+
+            if (createIssue) {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+                labels: ["relatorio", "demo"]
+              });
+            }
+
+            if (saveMarkdown) {
+              const path = `docs/reports/${reportDate}.md`;
+              let sha;
+              try {
+                const current = await github.rest.repos.getContent({
+                  owner,
+                  repo,
+                  path,
+                  ref: context.ref
+                });
+                if (!Array.isArray(current.data)) {
+                  sha = current.data.sha;
+                }
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+
+              await github.rest.repos.createOrUpdateFileContents({
+                owner,
+                repo,
+                path,
+                message: `Add weekly project report ${reportDate}`,
+                content: Buffer.from(body, "utf8").toString("base64"),
+                sha
+              });
+            }
+
+            core.summary
+              .addHeading("Agentic weekly project report")
+              .addRaw(body)
+              .write();
+
+            core.notice(`Agentic weekly report generated: ${title}`);
