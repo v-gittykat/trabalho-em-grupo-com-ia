@@ -55,7 +55,7 @@ docs/
     planning-agent.md
     project-health-agent.md
     report-agent.md
-    weekly-project-reporter-agent.md
+    weekly-project-reporter.agent.md
 ```
 
 ## Agentes da demo

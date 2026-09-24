@@ -11,7 +11,7 @@ Este repositório usa agentes como **perfis/prompt files** para demonstrar agent
 | Planning Agent | `.github/agents/planning-agent.md` | Transforma tema em plano, fases, tarefas e critérios de aceite. |
 | Project Health Agent | `.github/agents/project-health-agent.md` | Analisa bloqueios, riscos, atrasos e dependências. |
 | Report Agent | `.github/agents/report-agent.md` | Gera relatórios semanais para grupo e stakeholders. |
-| Weekly Project Reporter Agent | `.github/agents/weekly-project-reporter-agent.md` | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
+| Weekly Project Reporter Agent | `.github/agents/weekly-project-reporter.agent.md` | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
 
 ## Como usar na demo
 

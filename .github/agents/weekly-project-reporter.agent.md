@@ -2,8 +2,7 @@
 name: Weekly Project Reporter
 description: Gera relatórios semanais de avanço, identifica bloqueadores, riscos, dependências e sugere próximas ações para projetos acompanhados com GitHub Issues e Projects.
 user-invocable: true
-tools:
-  - codebase
+tools: ["read", "search", "github/*"]
 ---
 
 # Weekly Project Reporter Agent
