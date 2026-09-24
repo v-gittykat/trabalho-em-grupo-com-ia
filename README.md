@@ -54,6 +54,7 @@ docs/
     planning-agent.md
     project-health-agent.md
     report-agent.md
+    weekly-project-reporter-agent.md
 ```
 
 ## Agentes da demo
@@ -63,6 +64,24 @@ docs/
 | Planning Agent | Transforma o tema em objetivos, fases, tarefas e critérios de aceite. |
 | Project Health Agent | Analisa bloqueios, riscos, atrasos e dependências. |
 | Report Agent | Gera relatório semanal para o grupo e stakeholders. |
+| Weekly Project Reporter Agent | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
+
+## Relatório semanal com agente
+
+O workflow **Weekly project report** pode ser executado manualmente ou por agenda. Ele cria uma issue de relatório com:
+
+- indicadores gerais do projeto;
+- principais avanços;
+- bloqueadores;
+- riscos;
+- dependências críticas;
+- tarefas que precisam de atenção;
+- plano de recuperação sugerido;
+- prompt para refinar a análise com Copilot.
+
+Na demo, a narrativa é:
+
+> A Action dispara. O agente interpreta. O humano decide.
 
 ## Como usar com GitHub Copilot
 
@@ -84,4 +103,3 @@ Transforme este plano em GitHub Issues. Para cada issue, gere título, descriç�
 ## Mensagem principal da demo
 
 > A IA não faz o trabalho pelo grupo. Ela ajuda o grupo a transformar uma ideia inicial em um projeto organizado, rastreável e acompanhável.
-

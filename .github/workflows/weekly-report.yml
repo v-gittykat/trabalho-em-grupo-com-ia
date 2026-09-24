@@ -2,6 +2,11 @@ name: Weekly project report
 
 on:
   workflow_dispatch:
+    inputs:
+      report_title:
+        description: "Titulo opcional para o relatorio"
+        required: false
+        type: string
   schedule:
     - cron: "0 21 * * 5"
 
@@ -13,50 +18,173 @@ jobs:
   create-report-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: Create weekly report issue
+      - name: Create agentic weekly report issue
         uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
-            const { data: issues } = await github.rest.issues.listForRepo({
+            const now = new Date();
+            const sevenDaysAgo = new Date(now);
+            sevenDaysAgo.setDate(now.getDate() - 7);
+
+            const allItems = await github.paginate(github.rest.issues.listForRepo, {
               owner,
               repo,
-              state: "open",
+              state: "all",
               per_page: 100
             });
 
-            const taskIssues = issues.filter(issue => !issue.pull_request);
-            const blocked = taskIssues.filter(issue =>
-              issue.labels.some(label => label.name === "bloqueio")
+            const issues = allItems.filter(issue => !issue.pull_request);
+            const openIssues = issues.filter(issue => issue.state === "open");
+            const closedIssues = issues.filter(issue => issue.state === "closed");
+            const recentlyClosed = closedIssues.filter(issue =>
+              new Date(issue.closed_at || issue.updated_at) >= sevenDaysAgo
             );
+
+            const labelNames = issue => issue.labels.map(label => label.name);
+            const hasLabel = (issue, names) =>
+              labelNames(issue).some(label => names.includes(label));
+            const textOf = issue =>
+              `${issue.title}\n${issue.body || ""}`.toLowerCase();
+
+            const blockers = openIssues.filter(issue =>
+              hasLabel(issue, ["bloqueio"]) ||
+              textOf(issue).includes("bloqueio") ||
+              textOf(issue).includes("bloqueado") ||
+              textOf(issue).includes("impedido")
+            );
+
+            const risks = openIssues.filter(issue =>
+              hasLabel(issue, ["risco", "prioridade-alta"]) ||
+              textOf(issue).includes("risco") ||
+              textOf(issue).includes("atraso")
+            );
+
+            const dependencies = openIssues.filter(issue =>
+              hasLabel(issue, ["dependencia"]) ||
+              textOf(issue).includes("depende de") ||
+              textOf(issue).includes("dependência") ||
+              textOf(issue).includes("dependencia")
+            );
+
+            const stale = openIssues.filter(issue => {
+              const updated = new Date(issue.updated_at);
+              return updated < sevenDaysAgo && !hasLabel(issue, ["relatorio"]);
+            });
+
+            const highPriority = openIssues.filter(issue =>
+              hasLabel(issue, ["prioridade-alta"])
+            );
+
+            const groupedByMilestone = openIssues.reduce((groups, issue) => {
+              const milestone = issue.milestone?.title || "Sem milestone";
+              groups[milestone] = groups[milestone] || [];
+              groups[milestone].push(issue);
+              return groups;
+            }, {});
+
+            const bullet = issue => {
+              const labels = labelNames(issue);
+              const labelText = labels.length ? ` — ${labels.join(", ")}` : "";
+              return `- #${issue.number} ${issue.title}${labelText}`;
+            };
+
+            const limit = (items, max = 8) => {
+              const selected = items.slice(0, max).map(bullet);
+              if (items.length > max) {
+                selected.push(`- ... e mais ${items.length - max} item(ns).`);
+              }
+              return selected.length ? selected : ["- Nenhum item identificado."];
+            };
+
+            const milestoneLines = Object.entries(groupedByMilestone)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([milestone, items]) => `- **${milestone}**: ${items.length} issue(s) aberta(s)`);
+
+            const progressPercent = issues.length
+              ? Math.round((closedIssues.length / issues.length) * 100)
+              : 0;
+
+            const titleInput = context.payload.inputs?.report_title?.trim();
+            const reportTitle = titleInput || `Relatorio semanal - ${now.toISOString().slice(0, 10)}`;
 
             const body = [
               "# Relatorio semanal do projeto",
               "",
-              `Issues abertas: ${taskIssues.length}`,
-              `Bloqueios abertos: ${blocked.length}`,
+              "> Gerado por GitHub Actions a partir do estado das issues. Use o **Weekly Project Reporter Agent** no Copilot Chat para refinar a análise, validar o plano de recuperação e ajustar a comunicação para o grupo.",
               "",
-              "## Itens em aberto",
-              ...taskIssues.map(issue => `- #${issue.number} ${issue.title}`),
+              "## Resumo executivo",
               "",
-              "## Bloqueios",
-              ...(blocked.length
-                ? blocked.map(issue => `- #${issue.number} ${issue.title}`)
-                : ["- Nenhum bloqueio registrado."]),
+              blockers.length
+                ? `O projeto tem ${openIssues.length} issue(s) aberta(s), ${blockers.length} bloqueador(es) e ${risks.length} risco(s) em acompanhamento. A prioridade da semana deve ser remover bloqueios antes de iniciar novas tarefas.`
+                : `O projeto tem ${openIssues.length} issue(s) aberta(s), sem bloqueadores explícitos registrados. A prioridade da semana deve ser manter as tarefas atualizadas e revisar riscos.`,
               "",
-              "## Proximas acoes sugeridas",
-              "1. Revisar issues sem atualizacao recente.",
-              "2. Priorizar bloqueios antes de iniciar novas tarefas.",
-              "3. Atualizar o GitHub Project com status e prazos.",
+              "## Indicadores gerais",
               "",
-              "> Este relatorio foi gerado automaticamente por GitHub Actions."
+              `- Issues totais: ${issues.length}`,
+              `- Issues abertas: ${openIssues.length}`,
+              `- Issues fechadas: ${closedIssues.length}`,
+              `- Concluidas nos ultimos 7 dias: ${recentlyClosed.length}`,
+              `- Progresso aproximado: ${progressPercent}%`,
+              `- Bloqueadores abertos: ${blockers.length}`,
+              `- Riscos em acompanhamento: ${risks.length}`,
+              `- Dependencias abertas: ${dependencies.length}`,
+              `- Issues sem atualizacao recente: ${stale.length}`,
+              "",
+              "## Principais avancos",
+              "",
+              ...limit(recentlyClosed, 6),
+              "",
+              "## Bloqueadores",
+              "",
+              ...limit(blockers, 8),
+              "",
+              "## Riscos",
+              "",
+              ...limit(risks, 8),
+              "",
+              "## Dependencias criticas",
+              "",
+              ...limit(dependencies, 8),
+              "",
+              "## Tarefas que precisam de atencao",
+              "",
+              ...limit([...highPriority, ...stale], 10),
+              "",
+              "## Distribuicao por milestone",
+              "",
+              ...(milestoneLines.length ? milestoneLines : ["- Nenhuma milestone registrada."]),
+              "",
+              "## Plano de recuperacao sugerido",
+              "",
+              "1. Priorizar issues com label `bloqueio` ou `risco`.",
+              "2. Verificar dependencias antes de iniciar novas tarefas.",
+              "3. Atualizar issues sem movimentacao recente com um comentario de status.",
+              "4. Redistribuir tarefas bloqueadas quando o responsavel nao conseguir avancar.",
+              "5. Revisar o GitHub Project e confirmar se status, prioridade, risco e prazo estao atualizados.",
+              "",
+              "## Proximas acoes recomendadas",
+              "",
+              "1. Pedir ao grupo uma atualizacao objetiva nas issues em andamento.",
+              "2. Usar o Copilot com o `Weekly Project Reporter Agent` para transformar este diagnostico em mensagem para o grupo ou professor.",
+              "3. Converter bloqueios recorrentes em plano de recuperacao.",
+              "",
+              "## Prompt para refinar com Copilot",
+              "",
+              "```text",
+              "Atue como Weekly Project Reporter Agent deste repositorio.",
+              "Use o relatorio abaixo como entrada e gere uma versao executiva para o grupo, destacando bloqueadores, riscos, dependencias e proximas acoes.",
+              "```",
+              "",
+              "> A Action dispara. O agente interpreta. O humano decide."
             ].join("\n");
 
             await github.rest.issues.create({
               owner,
               repo,
-              title: `Relatorio semanal - ${new Date().toISOString().slice(0, 10)}`,
+              title: reportTitle,
               body,
-              labels: ["relatorio"]
+              labels: ["relatorio", "demo"]
             });
 
+            core.notice(`Weekly report created: ${reportTitle}`);
