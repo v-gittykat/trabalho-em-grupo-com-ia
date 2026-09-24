@@ -1,3 +1,11 @@
+---
+name: Weekly Project Reporter
+description: Gera relatórios semanais de avanço, identifica bloqueadores, riscos, dependências e sugere próximas ações para projetos acompanhados com GitHub Issues e Projects.
+user-invocable: true
+tools:
+  - codebase
+---
+
 # Weekly Project Reporter Agent
 
 ## Objetivo
@@ -82,4 +90,3 @@ Não invente informações. Use apenas o contexto registrado no repositório.
 3. Abra a issue de relatório criada automaticamente.
 4. Explique que o workflow faz a coleta estruturada e o agente orienta a análise.
 5. Use Copilot Chat com o prompt acima para melhorar o relatório ou propor plano de recuperação.
-
