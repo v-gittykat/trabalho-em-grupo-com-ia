@@ -1,5 +1,7 @@
 # Trabalho em Grupo com IA
 
+![Banner do GitHub Universe](docs/assets/github-universe-banner.webp)
+
 Este repositório é uma demonstração acadêmica de como usar GitHub Copilot, GitHub Issues, GitHub Projects, GitHub Actions e workflows agentic para organizar um trabalho em grupo.
 
 ## Cenário da demo
@@ -145,10 +147,10 @@ Este projeto foi concebido como uma iniciativa aberta ao diálogo acadêmico e �
 
 A participação pode acontecer de diferentes formas:
 
-- enviando ideias ou críticas por meio de issues;
-- sugerindo melhorias na documentação ou na estrutura da demo;
-- propondo novos cenários de uso para GitHub Copilot e workflows de gestão;
-- contribuindo com materiais complementares para ensino, apresentação ou discussão.
+- 💬 enviando ideias ou críticas por meio de issues;
+- ✨ sugerindo melhorias na documentação ou na estrutura da demo;
+- 🤖 propondo novos cenários de uso para GitHub Copilot e workflows de gestão;
+- 📚 contribuindo com materiais complementares para ensino, apresentação ou discussão.
 
 O objetivo é manter o projeto acessível, transparente e útil para estudantes, professores, pesquisadores e profissionais interessados em práticas colaborativas com IA.
 
