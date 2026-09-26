@@ -111,9 +111,37 @@ Transforme este plano em GitHub Issues. Para cada issue, gere título, descriç�
 
 ## Feedback e contribuições
 
-Este projeto foi concebido como uma iniciativa aberta ao diálogo acadêmico e à colaboração da comunidade. Comentários, sugestões de melhoria, observações sobre clareza e propostas de extensão são bem-vindos.
+Este repositório foi pensado como material aberto para educação, demonstração e colaboração.
 
-![Preview do GitHub Universe com interação de cursor](docs/assets/github-universe-devtools-preview.png)
+Durante a apresentação, o objetivo é mostrar não apenas a demo em funcionamento, mas também abrir espaço para feedback, sugestões e melhorias. Se você viu algum ponto que pode ser melhorado, quer propor uma nova ideia ou deseja contribuir com uma melhoria, este repositório está aberto para isso.
+
+### Como contribuir
+
+- abra uma issue com sua sugestão;
+- proponha uma melhoria no conteúdo ou na estrutura do demo;
+- compartilhe ideias para tornar a apresentação mais clara, mais prática ou mais interessante;
+- envie um pull request com ajustes, novos exemplos ou extensões do material.
+
+### Tipos de feedback que valorizamos
+
+- 🧠 sugestões de melhoria na narrativa da apresentação;
+- ✨ novos exemplos práticos de uso do GitHub;
+- 🤖 ideias para usar mais Copilot e workflows;
+- 📊 propostas para melhorar relatórios e acompanhamento;
+- 🗂️ sugestões sobre organização da demo e do repositório.
+
+### Sugestão de discussão
+
+Se você quiser comentar sobre a apresentação, pode usar a seção de discussão do repositório para compartilhar:
+
+- o que mais chamou sua atenção;
+- o que ficou mais claro;
+- o que poderia melhorar;
+- ideias para tornar o exemplo mais útil e mais forte.
+
+## Feedback e contribuições
+
+Este projeto foi concebido como uma iniciativa aberta ao diálogo acadêmico e à colaboração da comunidade. Comentários, sugestões de melhoria, observações sobre clareza e propostas de extensão são bem-vindos.
 
 A participação pode acontecer de diferentes formas:
 
