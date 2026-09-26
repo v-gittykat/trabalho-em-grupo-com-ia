@@ -139,6 +139,21 @@ Se você quiser comentar sobre a apresentação, pode usar a seção de discuss�
 - o que poderia melhorar;
 - ideias para tornar o exemplo mais útil e mais forte.
 
+## Feedback e contribuições
+
+Este projeto foi concebido como uma iniciativa aberta ao diálogo acadêmico e à colaboração da comunidade. Comentários, sugestões de melhoria, observações sobre clareza e propostas de extensão são bem-vindos.
+
+A participação pode acontecer de diferentes formas:
+
+- enviando ideias ou críticas por meio de issues;
+- sugerindo melhorias na documentação ou na estrutura da demo;
+- propondo novos cenários de uso para GitHub Copilot e workflows de gestão;
+- contribuindo com materiais complementares para ensino, apresentação ou discussão.
+
+O objetivo é manter o projeto acessível, transparente e útil para estudantes, professores, pesquisadores e profissionais interessados em práticas colaborativas com IA.
+
+Para contribuir, basta abrir uma issue com a proposta ou uma pull request com a alteração desejada, sempre com descrições claras e contexto suficiente para facilitar a revisão e o acompanhamento.
+
 ## Mensagem principal da demo
 
 > A IA não faz o trabalho pelo grupo. Ela ajuda o grupo a transformar uma ideia inicial em um projeto organizado, rastreável e acompanhável.
