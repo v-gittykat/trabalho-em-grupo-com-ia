@@ -58,6 +58,10 @@ docs/
     project-health-agent.md
     report-agent.md
     weekly-project-reporter.agent.md
+    dependency-checker.agent.md
+  prompts/
+    weekly-project-report.prompt.md
+    dependency-check.prompt.md
 ```
 
 ## Agentes da demo
@@ -68,6 +72,7 @@ docs/
 | Project Health Agent | Analisa bloqueios, riscos, atrasos e dependências. |
 | Report Agent | Gera relatório semanal para o grupo e stakeholders. |
 | Weekly Project Reporter Agent | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
+| Dependency Checker | Identifica dependências entre tarefas, equipes, entregas e milestones e alerta sobre impactos no cronograma. |
 
 ## Relatório semanal com agente
 
