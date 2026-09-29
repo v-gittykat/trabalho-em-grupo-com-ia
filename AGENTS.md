@@ -8,9 +8,9 @@ Este repositório usa agentes como **perfis/prompt files** para demonstrar agent
 
 | Agente | Arquivo | Função |
 |---|---|---|
-| Planning Agent | `.github/agents/planning-agent.md` | Transforma tema em plano, fases, tarefas e critérios de aceite. |
-| Project Health Agent | `.github/agents/project-health-agent.md` | Analisa bloqueios, riscos, atrasos e dependências. |
-| Report Agent | `.github/agents/report-agent.md` | Gera relatórios semanais para grupo e stakeholders. |
+| Planning Agent | `.github/agents/planning-agent.agent.md` | Transforma tema em plano, fases, tarefas e critérios de aceite. |
+| Project Health Agent | `.github/agents/project-health-agent.agent.md` | Analisa bloqueios, riscos, atrasos e dependências. |
+| Report Agent | `.github/agents/report-agent.agent.md` | Gera relatórios semanais para grupo e stakeholders. |
 | Weekly Project Reporter Agent | `.github/agents/weekly-project-reporter.agent.md` | Analisa issues, bloqueadores, riscos e dependências para apoiar o relatório semanal. |
 | Dependency Checker | `.github/agents/dependency-checker.agent.md` | Identifica dependências entre tarefas, equipes, entregas e milestones e alerta sobre impactos no cronograma. |
 

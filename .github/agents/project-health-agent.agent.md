@@ -1,3 +1,10 @@
+---
+name: Project Health Agent
+description: Analisa a saúde do projeto, identificando bloqueios, riscos, tarefas atrasadas, dependências e próximas ações recomendadas.
+user-invocable: true
+tools: ["read", "search", "github/*"]
+---
+
 # Project Health Agent
 
 ## Objetivo

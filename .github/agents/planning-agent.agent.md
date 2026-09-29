@@ -1,3 +1,10 @@
+---
+name: Planning Agent
+description: Transforma um tema acadêmico amplo em plano de projeto, objetivos, fases, tarefas, critérios de aceite, riscos e milestones.
+user-invocable: true
+tools: ["read", "search", "github/*"]
+---
+
 # Planning Agent
 
 ## Objetivo

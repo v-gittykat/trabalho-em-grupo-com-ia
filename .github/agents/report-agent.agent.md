@@ -1,3 +1,10 @@
+---
+name: Report Agent
+description: Gera relatórios claros para grupo, professor ou stakeholders com progresso, pendências, bloqueios, riscos e próximas ações.
+user-invocable: true
+tools: ["read", "search", "github/*"]
+---
+
 # Report Agent
 
 ## Objetivo

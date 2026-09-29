@@ -54,9 +54,9 @@ docs/
     weekly-report.yml
     issue-triage.yml
   agents/
-    planning-agent.md
-    project-health-agent.md
-    report-agent.md
+    planning-agent.agent.md
+    project-health-agent.agent.md
+    report-agent.agent.md
     weekly-project-reporter.agent.md
     dependency-checker.agent.md
   prompts/
